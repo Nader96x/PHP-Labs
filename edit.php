@@ -1,14 +1,67 @@
 <?php
+// error reporting none
+error_reporting(0);
 
 $errors = [];
-if($_GET && in_array("errors",$_GET)){
+if($_GET){
     $errors = json_decode($_GET['errors'],true);
 }
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    echo $_POST['id'];
+    $allowed = ["id","fname","lname","address","country","gender","langs","username","pass","department"];
+    $required = ["id","fname","lname","gender","username","pass"];
+    $errors = [];
+    $_POST = array_intersect_key($_POST,array_flip($allowed));
+    var_dump($_POST);
+    foreach($allowed as $key){
+        if(!isset($_POST[$key])){
+            $errors[$key] = $key." is required";
+        }else {
+            if (in_array($key, $required) && empty($_POST[$key]))
+                $errors[$key] = $key . " is required and can't be empty";
+            elseif ($key == "gender" &&  !in_array($_POST['gender'], ["male", "female"]) )
+                $errors[$key] = $key . " is one Of [male,female].";
+            elseif ($key == "pass" && strlen($_POST['pass']) < 8)
+                $errors[$key] = $key . " is required and can't be empty and can't be less than 8";
+            elseif ($key == "username" && strlen($_POST['username']) < 8)
+                $errors[$key] = $key . " is required and can't be empty and can't be less than 8";
+            elseif ($key == "country" && !in_array($_POST['country'], ["EG", "UK", "US"]))
+                $errors[$key] = $key . " is one Of [EG,UK,US].";
+            elseif ($key == "fname" && strlen($_POST['fname']) < 3)
+                $errors[$key] = $key . " is required and can't be empty and can't be less than 3";
+            elseif ($key == "lname" && strlen($_POST['lname']) < 3)
+                $errors[$key] = $key . " is required and can't be empty and can't be less than 3";
+        }
+
+
+    }
+    if($errors){
+        header("Location:edit.php?id={$_POST['id']}&errors=".json_encode($errors));
+    }else{
+        $users = file("users.txt");
+        $langs = implode(",",$_POST['langs']);
+        foreach ($users as $key=>$user){
+            if (explode(":",$user)[0] == $_POST['id']){
+//                unset($users[$key]);
+                echo $key;
+                echo $users[$key];
+                $users[$key] = "{$_POST['id']}:{$_POST['fname']}:{$_POST['lname']}:{$_POST['gender']}:{$_POST['address']}:{$_POST['country']}:{$langs}:{$_POST['username']}:{$_POST['pass']}:{$_POST['department']}\n";
+                break;
+            }
+        }
+        file_put_contents("users.txt",implode("",$users));
+        header("Location:users.php");
+    }
+    exit;
+}
+
+
 
 $user = [];
 if ($_SERVER['REQUEST_METHOD'] == "GET" && $_GET["id"] ){
         $id = $_GET['id'];
-        echo $id."<br>";
+//        echo $id."<br>";
         $users = file("users.txt");
         $users =array_filter($users,function($user) use($id){
             $user = explode(":",$user);
@@ -26,12 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && $_GET["id"] ){
 //    echo "<pre>";
 //    var_dump($user);
 //    echo "</pre>";
-
-}else{
-    header("location:users.php");
-    exit;
+elseif (in_array("errors",$_GET)){
+            ;
 }
-
+}else{
+//    header("location:users.php");
+//    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && $_GET["id"] ){
 <body>
 
 <div class="container">
-    <form method="POST" action="users.php">
+    <form method="POST" action="edit.php">
+        <input type="hidden" name="id" value="<?php echo $user[0]?>">
         <div class="mb-3">
             <label for="fname" class="form-label">First Name : </label>
             <input name="fname" type="text" class="form-control" id="fname" value="<?php echo $user[1]?>">
@@ -85,8 +140,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && $_GET["id"] ){
         <select name="country" class="form-select" aria-label="Default select example">
             <option disabled>Open this select menu</option>
             <option <?php echo ($user[5]=='EG')? 'selected':''?> value="EG">Egypt</option>
-            <option <?php echo ($user[5]=='EG')? 'selected':''?> value="UK">United Kingdom</option>
-            <option <?php echo ($user[5]=='EG')? 'selected':''?> value="US">United States</option>
+            <option <?php echo ($user[5]=='UK')? 'selected':''?> value="UK">United Kingdom</option>
+            <option <?php echo ($user[5]=='US')? 'selected':''?> value="US">United States</option>
         </select>
         <?php if($errors && isset($errors['country']) && !empty($errors['country'])){ ?>
             <div class="alert alert-danger" role="alert">

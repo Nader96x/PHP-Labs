@@ -2,6 +2,7 @@
 $errors = [];
 if($_GET){
     $errors = json_decode($_GET['errors'],true);
+    $old = json_decode($_GET['old'],true);
 }
 
 ?>
@@ -25,7 +26,7 @@ if($_GET){
         <form method="POST" action="users.php">
             <div class="mb-3">
                 <label for="fname" class="form-label">First Name : </label>
-                <input name="fname" type="text" class="form-control" id="fname" value="Nader">
+                <input name="fname" type="text" class="form-control" id="fname" value="<?php echo ($old && $old['fname'])?$old['fname']:''?>">
                 <?php if($errors && isset($errors['fname']) && !empty($errors['fname'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['fname'] ?>
@@ -34,7 +35,7 @@ if($_GET){
             </div>
             <div class="mb-3">
                 <label for="lname" class="form-label">Last Name : </label>
-                <input name="lname" type="text" class="form-control" id="lname" value="Mohammed">
+                <input name="lname" type="text" class="form-control" id="lname" value="<?php echo ($old && $old['lname'])?$old['lname']:''?>">
                 <?php if($errors && isset($errors['lname']) && !empty($errors['lname'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['lname'] ?>
@@ -45,7 +46,7 @@ if($_GET){
             <!-- textarea -->
             <div class="mb-3">
                 <label for="address" class="form-label">Address :</label>
-                <textarea name="address" class="form-control" id="address" rows="3">Samannoud, gharbia, egypt</textarea>
+                <textarea name="address" class="form-control" id="address" rows="3"><?php echo ($old && $old['address'])?$old['address']:''?></textarea>
                 <?php if($errors && isset($errors['address']) && !empty($errors['address'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['address'] ?>
@@ -56,9 +57,9 @@ if($_GET){
             <!-- select -->
             <select name="country" class="form-select" aria-label="Default select example">
                 <option disabled>Open this select menu</option>
-                <option selected value="EG">Egypt</option>
-                <option value="UK">United Kingdom</option>
-                <option value="US">United States</option>
+                <option <?php echo ($old && $old['country'] && $old['country']=='EG')?'selected':''?> value="EG">Egypt</option>
+                <option <?php echo ($old && $old['country'] && $old['country']=='UK')?'selected':''?> value="UK">United Kingdom</option>
+                <option <?php echo ($old && $old['country'] && $old['country']=='US')?'selected':''?> value="US">United States</option>
             </select>
             <?php if($errors && isset($errors['country']) && !empty($errors['country'])){ ?>
             <div class="alert alert-danger" role="alert">
@@ -71,11 +72,11 @@ if($_GET){
                     <label for="gender" class="form-label">Gender :</label>
                 </div>
                 <div class="form-check col-2">
-                    <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                    <input class="form-check-input" type="radio" name="gender" id="male" value="male" <?php echo ($old && $old['gender'] && $old['gender']=='male')?'checked':''?>>
                     <label class="form-check-label" for="male">Male</label>
                 </div>
                 <div class="form-check col-2">
-                    <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                    <input class="form-check-input" type="radio" name="gender" id="female" value="female" <?php echo ($old && $old['gender'] && $old['gender']=='female')?'checked':''?>>
                     <label class="form-check-label" for="female">Female</label>
                 </div>
                 <?php if($errors && isset($errors['gender']) && !empty($errors['gender'])){ ?>
@@ -87,28 +88,28 @@ if($_GET){
             <!-- Checkboxes -->
             <div class="row">
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="php" value="PHP" checked>
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="php" value="PHP" <?php echo ($old && $old['langs'] &&in_array("PHP",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="php">PHP</label>
                 </div>
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="js" value="JavaScript" checked>
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="js" value="JavaScript" <?php echo ($old && $old['langs'] &&in_array("JavaScript",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="js">JS</label>
                 </div>
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="python" value="Python" checked>
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="python" value="Python" <?php echo ($old && $old['langs'] &&in_array("Python",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="python">Python</label>
                 </div>
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="perl" value="Perl">
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="perl" value="Perl" <?php echo ($old && $old['langs'] &&in_array("Perl",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="perl">Perl</label>
                 </div>
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="ruby" value="Ruby">
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="ruby" value="Ruby" <?php echo ($old && $old['langs'] &&in_array("Ruby",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="ruby">Ruby</label>
                 </div>
 
                 <div class="mb-3 form-check col-4">
-                    <input name="langs[]" type="checkbox" class="form-check-input" id="go" value="Go Lang">
+                    <input name="langs[]" type="checkbox" class="form-check-input" id="go" value="Go Lang" <?php echo ($old && $old['langs'] &&in_array("Go Lang",$old["langs"]))? 'checked':''?>>
                     <label class="form-check-label" for="go">Go Lang</label>
                 </div>
                 <?php if($errors && isset($errors['langs']) && !empty($errors['langs'])){ ?>
@@ -121,7 +122,7 @@ if($_GET){
             <!-- login -->
             <div class="mb-3">
                 <label for="username" class="form-label">username : </label>
-                <input name="username" type="text" class="form-control" id="username" value="username">
+                <input name="username" type="text" class="form-control" id="username" value="<?php echo ($old && $old['username'])?$old['username']:''?>">
                 <?php if($errors && isset($errors['username']) && !empty($errors['username'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['username'] ?>
@@ -130,7 +131,7 @@ if($_GET){
             </div>
             <div class="mb-3">
                 <label for="pass" class="form-label">Password : </label>
-                <input name="pass" type="text" class="form-control" id="pass" value="12345678">
+                <input name="pass" type="text" class="form-control" id="pass" value="<?php echo ($old && $old['pass'])?$old['pass']:''?>">
                 <?php if($errors && isset($errors['pass']) && !empty($errors['pass'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['pass'] ?>
@@ -139,7 +140,7 @@ if($_GET){
             </div>
             <div class="mb-3">
                 <label for="department" class="form-label">Department : </label>
-                <input name="department" readonly value="Open Source" type="text" class="form-control" id="department">
+                <input name="department" readonly value="<?php echo ($old && $old['department'])?$old['department']:''?>" type="text" class="form-control" id="department">
                 <?php if($errors && isset($errors['department']) && !empty($errors['department'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['department'] ?>
