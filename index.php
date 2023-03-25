@@ -1,9 +1,10 @@
 <?php
+error_reporting(0);
 $errors = [];
-if($_GET){
-    $errors = json_decode($_GET['errors'],true);
-    $old = json_decode($_GET['old'],true);
-}
+//if($_GET){
+    @$errors = json_decode($_GET['errors'],true);
+    @$old = json_decode($_GET['old'],true);
+//}
 
 ?>
 
@@ -140,7 +141,7 @@ if($_GET){
             </div>
             <div class="mb-3">
                 <label for="department" class="form-label">Department : </label>
-                <input name="department" readonly value="<?php echo ($old && $old['department'])?$old['department']:''?>" type="text" class="form-control" id="department">
+                <input name="department" readonly value="<?php echo ($old && $old['department'])?$old['department']:'Open Source'?>" type="text" class="form-control" id="department">
                 <?php if($errors && isset($errors['department']) && !empty($errors['department'])){ ?>
                 <div class="alert alert-danger" role="alert">
                     <?php echo $errors['department'] ?>
